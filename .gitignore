@@ -1,0 +1,41 @@
+# Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.mvn/
+.metadata/
+bin/
+*.tmp
+*.bak
+*.swp
+*~
+.classpath
+.project
+.settings/
+
+# Node / React
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Brain / Artifacts (Optional, usually we don't want these in the main repo)
+.gemini/
+brain/
