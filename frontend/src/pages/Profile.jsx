@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
+import { userService } from '../services/api';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -6,32 +7,20 @@ import {
     Clock, BookOpen, User as UserIcon, Camera, Save, X, Mail, Phone, Briefcase
 } from 'lucide-react';
 
-const Profile = ({ setActiveTab }) => {
-    // State for user info
-    const [user, setUser] = useState(() => {
-        const saved = localStorage.getItem('devready_user');
-        return saved ? JSON.parse(saved) : {
-            name: 'Elite Architect',
-            position: 'Senior Software Engineer',
-            email: 'dev.architect@example.com',
-            phone: '+91 98765 43210',
-            profilePic: null, // null means use default icon
-            rank: 'PRO'
-        };
-    });
-
+const Profile = ({ user, setUser, setActiveTab }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState(user);
     const fileInputRef = useRef(null);
 
-    // Persist user data
-    useEffect(() => {
-        localStorage.setItem('devready_user', JSON.stringify(user));
-    }, [user]);
-
-    const handleSave = () => {
-        setUser(editForm);
-        setIsEditing(false);
+    const handleSave = async () => {
+        try {
+            const updatedUser = await userService.syncUser(editForm);
+            setUser(updatedUser);
+            localStorage.setItem('devready_user', JSON.stringify(updatedUser));
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Failed to save profile:", error);
+        }
     };
 
     const handleCancel = () => {

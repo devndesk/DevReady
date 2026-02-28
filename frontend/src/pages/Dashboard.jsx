@@ -2,8 +2,7 @@ import { Flame, Code, Server, Database, ChevronRight, Terminal, Activity, Trophy
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 
-const Dashboard = ({ setActiveTab, setSelectedCategory }) => {
-    const user = JSON.parse(localStorage.getItem('devready_user') || '{}');
+const Dashboard = ({ user, setActiveTab, setSelectedCategory }) => {
 
     return (
         <div className="p-5 space-y-8 pb-24">

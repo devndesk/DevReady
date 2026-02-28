@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { userService } from '../services/api';
 
-const Quiz = ({ onBack }) => {
+const Quiz = ({ user, setUser, onBack }) => {
     const [step, setStep] = useState('setup'); // setup, loading, playing, results
     const [topic, setTopic] = useState('Java Core');
     const [questionCount, setQuestionCount] = useState(10);
@@ -91,12 +91,12 @@ const Quiz = ({ onBack }) => {
 
         // Backend Update
         try {
-            const localUser = JSON.parse(localStorage.getItem('devready_user'));
-            if (localUser?.id) {
-                const updatedUser = await userService.updateProgress(localUser.id, topic, isCorrect, 'Hard');
+            if (user?.id) {
+                const updatedUser = await userService.updateProgress(user.id, topic, isCorrect, 'Hard');
 
-                // Sync to localStorage immediately
-                const mergedUser = { ...localUser, ...updatedUser };
+                // Sync to global state and localStorage
+                const mergedUser = { ...user, ...updatedUser };
+                setUser(mergedUser);
                 localStorage.setItem('devready_user', JSON.stringify(mergedUser));
             }
         } catch (error) {

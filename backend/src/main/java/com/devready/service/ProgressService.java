@@ -54,6 +54,9 @@ public class ProgressService {
             user.setMastery(mastery);
         }
         user.setTotalXp(user.getTotalXp() + xpGain);
+        System.out.println("[PROGRESS DEBUG] User: " + user.getEmail() + " | XP Gained: " + xpGain + " | Total XP: "
+                + user.getTotalXp());
+        System.out.println("[PROGRESS DEBUG] Questions Solved: " + user.getQuestionsSolved());
 
         // 2. Automated Streak Logic (String Based for reliability)
         String lastActivity = user.getLastActivityDate();

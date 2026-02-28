@@ -11,21 +11,32 @@ import { userService } from './services/api';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('devready_user');
+    return saved ? JSON.parse(saved) : {
+      name: 'Dev User',
+      position: 'Software Engineer',
+      email: 'dev.architect@example.com',
+      rank: 'NEWBIE',
+      totalXp: 0,
+      currentStreak: 0,
+      mastery: {}
+    };
+  });
   const [selectedCategory, setSelectedCategory] = useState('Java Core'); // Default category
 
   // Global user sync on load
   useEffect(() => {
     const syncWithBackend = async () => {
       try {
-        const localUser = JSON.parse(localStorage.getItem('devready_user'));
-        const email = localUser?.email || 'dev.architect@example.com';
+        const email = user?.email || 'dev.architect@example.com';
 
         // Fetch/Init user from backend
         const backendUser = await userService.getUser(email);
 
         // Merge and save back to local
         const mergedUser = {
-          ...localUser,
+          ...user,
           ...backendUser,
           id: backendUser.id, // Ensure we use the backend ID
           totalXp: backendUser.totalXp || 0,
@@ -34,11 +45,14 @@ function App() {
           rank: backendUser.rank || 'NEWBIE',
           mastery: backendUser.mastery || {}
         };
-        localStorage.setItem('devready_user', JSON.stringify(mergedUser));
 
-        // Sync locally modified profile if any
-        if (localUser) {
-          await userService.syncUser(localUser);
+        localStorage.setItem('devready_user', JSON.stringify(mergedUser));
+        setUser(mergedUser); // Update global state
+
+        // Sync locally modified profile if it hasn't been synced yet
+        if (user && !user.id) {
+          const syncedUser = await userService.syncUser(user);
+          setUser(prev => ({ ...prev, id: syncedUser.id }));
         }
       } catch (error) {
         console.error("Backend sync failed:", error);
@@ -50,17 +64,17 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return <Dashboard setActiveTab={setActiveTab} setSelectedCategory={setSelectedCategory} />;
+        return <Dashboard user={user} setActiveTab={setActiveTab} setSelectedCategory={setSelectedCategory} />;
       case 'flashcards':
-        return <Flashcards category={selectedCategory} />;
+        return <Flashcards user={user} setUser={setUser} category={selectedCategory} />;
       case 'cheatsheet':
         return <CheatSheet category={selectedCategory} />;
       case 'profile':
-        return <Profile setActiveTab={setActiveTab} />;
+        return <Profile user={user} setUser={setUser} setActiveTab={setActiveTab} />;
       case 'quiz':
-        return <Quiz onBack={() => setActiveTab('home')} />;
+        return <Quiz user={user} setUser={setUser} onBack={() => setActiveTab('home')} />;
       default:
-        return <Dashboard setActiveTab={setActiveTab} setSelectedCategory={setSelectedCategory} />;
+        return <Dashboard user={user} setActiveTab={setActiveTab} setSelectedCategory={setSelectedCategory} />;
     }
   };
 

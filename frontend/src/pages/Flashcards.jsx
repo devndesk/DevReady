@@ -5,7 +5,7 @@ import { RefreshCw, Check, X } from 'lucide-react';
 import { flashcardsData } from '../data/flashcardsData';
 import { userService } from '../services/api';
 
-const Flashcards = ({ category = "Java Core" }) => {
+const Flashcards = ({ user, setUser, category = "Java Core" }) => {
     const [currentCard, setCurrentCard] = useState(null);
     const [isFlipped, setIsFlipped] = useState(false);
 
@@ -30,17 +30,17 @@ const Flashcards = ({ category = "Java Core" }) => {
 
     const handleMastered = async (correct) => {
         try {
-            const localUser = JSON.parse(localStorage.getItem('devready_user'));
-            if (localUser?.id) {
+            if (user?.id) {
                 const updatedUser = await userService.updateProgress(
-                    localUser.id,
+                    user.id,
                     category,
                     correct,
                     currentCard?.difficulty || 'Easy'
                 );
 
-                // Sync to localStorage immediately
-                const mergedUser = { ...localUser, ...updatedUser };
+                // Sync to global state and localStorage
+                const mergedUser = { ...user, ...updatedUser };
+                setUser(mergedUser);
                 localStorage.setItem('devready_user', JSON.stringify(mergedUser));
             }
         } catch (error) {
