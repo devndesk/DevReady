@@ -27,9 +27,12 @@ export const userService = {
 };
 
 export const flashcardService = {
-    getRandomCard: async (category) => {
+    getRandomCard: async (category, excludeIds = []) => {
         const response = await api.get('/flashcards/random', {
-            params: { category }
+            params: {
+                category,
+                excludeIds: excludeIds.join(',')
+            }
         });
         return response.data;
     },

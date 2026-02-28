@@ -28,7 +28,7 @@ public class ProgressService {
         String today = LocalDate.now().toString();
 
         // 1. Dynamic XP Calculation
-        int xpGain = 2; // Default for incorrect
+        int xpGain = 0; // 0 XP for incorrect as per user request
         if (correct) {
             String diff = (difficulty != null) ? difficulty.toLowerCase() : "easy";
             switch (diff) {

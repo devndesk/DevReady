@@ -36,8 +36,6 @@ public class UserController {
         Optional<User> existing = userRepository.findByEmail(user.getEmail());
         if (existing.isPresent()) {
             User current = existing.get();
-            // Only update profile info, keep stats from server usually,
-            // but for this simple version we can overwrite
             user.setId(current.getId());
             return userRepository.save(user);
         }

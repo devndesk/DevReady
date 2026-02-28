@@ -1,9 +1,11 @@
 package com.devready.controller;
 
-import com.devready.entity.Inquiry;
+import com.devready.dto.QuizQuestion;
 import com.devready.service.FlashcardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/flashcards")
@@ -14,7 +16,10 @@ public class FlashcardController {
     private FlashcardService flashcardService;
 
     @GetMapping("/random")
-    public Inquiry getRandomCard(@RequestParam(required = false) String category) {
-        return flashcardService.getRandomFlashcard(category);
+    public QuizQuestion getRandomCard(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) List<String> excludeIds) {
+        System.out.println("[API] Request: category=" + category + ", excludeIdsSize=" + (excludeIds != null ? excludeIds.size() : 0));
+        return flashcardService.getRandomFlashcard(category, excludeIds);
     }
 }
