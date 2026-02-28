@@ -41,6 +41,9 @@ const LeagueLeaderboard = ({ user }) => {
 
         fetchLeaderboard();
 
+        // Auto-refresh leaderboard data every 30s
+        const refreshInterval = setInterval(fetchLeaderboard, 30000);
+
         // Timer Logic (Countdown to next Monday 00:00)
         const updateTimer = () => {
             const now = new Date();
@@ -60,7 +63,10 @@ const LeagueLeaderboard = ({ user }) => {
 
         updateTimer();
         const interval = setInterval(updateTimer, 60000);
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            clearInterval(refreshInterval);
+        };
     }, [user.leagueGroupId]);
 
     return (
@@ -93,14 +99,19 @@ const LeagueLeaderboard = ({ user }) => {
                     </div>
                 ) : (
                     <div className="space-y-2">
-                        {leaderboard.map((item, index) => {
+                        {leaderboard.length === 0 ? (
+                            <div className="glass-panel p-12 text-center rounded-[2.5rem] border-white/10">
+                                <Trophy size={48} className="mx-auto mb-4 text-emerald-500/20" />
+                                <p className="text-gray-400 text-sm font-medium">Synchronizing your group leaderboard...</p>
+                                <p className="text-[10px] text-gray-600 mt-2 font-mono">This usually takes a few seconds.</p>
+                            </div>
+                        ) : leaderboard.map((item, index) => {
                             const isCurrentUser = item.email === user.email;
                             const isPromotionZone = index < 3;
-                            const isDemotionZone = index >= 45;
 
                             return (
                                 <motion.div
-                                    key={item.id}
+                                    key={item.id || item._id || index}
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: index * 0.05 }}
@@ -109,8 +120,8 @@ const LeagueLeaderboard = ({ user }) => {
                                 >
                                     <div className="flex items-center gap-4">
                                         <span className={`w-6 text-center font-mono text-sm font-bold ${index === 0 ? 'text-yellow-400' :
-                                                index === 1 ? 'text-gray-300' :
-                                                    index === 2 ? 'text-orange-400' : 'text-gray-500'
+                                            index === 1 ? 'text-gray-300' :
+                                                index === 2 ? 'text-orange-400' : 'text-gray-500'
                                             }`}>
                                             {index + 1}
                                         </span>

@@ -32,15 +32,10 @@ function App() {
         const mergedUser = {
           ...user,
           ...backendUser,
-          id: backendUser.id,
-          totalXp: backendUser.totalXp || 0,
-          questionsSolved: backendUser.questionsSolved || 0,
-          currentStreak: backendUser.currentStreak || 0,
-          rank: backendUser.rank || 'NEWBIE',
-          weeklyXp: backendUser.weeklyXp || 0,
-          currentLeague: backendUser.currentLeague || 'BRONZE',
-          leagueGroupId: backendUser.leagueGroupId,
-          mastery: backendUser.mastery || {}
+          id: backendUser.id || user.id,
+          weeklyXp: backendUser.weeklyXp !== undefined ? backendUser.weeklyXp : user.weeklyXp,
+          currentLeague: backendUser.currentLeague || user.currentLeague || 'BRONZE',
+          leagueGroupId: backendUser.leagueGroupId || user.leagueGroupId,
         };
 
         localStorage.setItem('devready_user', JSON.stringify(mergedUser));
