@@ -21,17 +21,17 @@ function App() {
   // Global user sync on load
   useEffect(() => {
     const syncWithBackend = async () => {
-      try {
-        const email = user?.email || 'dev.architect@example.com';
+      if (!user?.email) return;
 
-        // Fetch/Init user from backend
-        const backendUser = await userService.getUser(email);
+      try {
+        // Fetch latest user data from backend
+        const backendUser = await userService.getUser(user.email);
 
         // Merge and save back to local
         const mergedUser = {
           ...user,
           ...backendUser,
-          id: backendUser.id, // Ensure we use the backend ID
+          id: backendUser.id,
           totalXp: backendUser.totalXp || 0,
           questionsSolved: backendUser.questionsSolved || 0,
           currentStreak: backendUser.currentStreak || 0,
@@ -40,19 +40,22 @@ function App() {
         };
 
         localStorage.setItem('devready_user', JSON.stringify(mergedUser));
-        setUser(mergedUser); // Update global state
-
-        // Sync locally modified profile if it hasn't been synced yet
-        if (user && !user.id) {
-          const syncedUser = await userService.syncUser(user);
-          setUser(prev => ({ ...prev, id: syncedUser.id }));
-        }
+        setUser(mergedUser);
       } catch (error) {
         console.error("Backend sync failed:", error);
       }
     };
     syncWithBackend();
-  }, []);
+  }, [user?.email]);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setActiveTab('home');
+  };
+
+  if (!user) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   const renderContent = () => {
     switch (activeTab) {
