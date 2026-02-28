@@ -22,11 +22,10 @@ public class UserController {
     @GetMapping("/{email}")
     public User getUserByEmail(@PathVariable String email) {
         return userRepository.findByEmail(email).orElseGet(() -> {
-            // Create a default user if not found for testing
+            // Create a default user if not found
             User newUser = new User();
             newUser.setEmail(email);
-            newUser.setName("Dev User");
-            newUser.setPosition("Software Engineer");
+            newUser.setName("Dev User"); // Default placeholder
             newUser.setRank("NEWBIE");
             return userRepository.save(newUser);
         });

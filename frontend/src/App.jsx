@@ -7,6 +7,7 @@ import Flashcards from './pages/Flashcards';
 import CheatSheet from './pages/CheatSheet';
 import Profile from './pages/Profile';
 import Quiz from './pages/Quiz';
+import Login from './pages/Login';
 import { userService } from './services/api';
 
 function App() {
