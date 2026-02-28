@@ -14,15 +14,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('devready_user');
-    return saved ? JSON.parse(saved) : {
-      name: 'Dev User',
-      position: 'Software Engineer',
-      email: 'dev.architect@example.com',
-      rank: 'NEWBIE',
-      totalXp: 0,
-      currentStreak: 0,
-      mastery: {}
-    };
+    return saved ? JSON.parse(saved) : null;
   });
   const [selectedCategory, setSelectedCategory] = useState('Java Core'); // Default category
 
