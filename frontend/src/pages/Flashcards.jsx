@@ -28,26 +28,24 @@ const Flashcards = ({ user, setUser, category = "Java Core" }) => {
         setIsFlipped(!isFlipped);
     };
 
-    const handleMastered = async (correct) => {
-        try {
-            if (user?.id) {
-                const updatedUser = await userService.updateProgress(
-                    user.id,
-                    category,
-                    correct,
-                    currentCard?.difficulty || 'Easy'
-                );
-
-                // Sync to global state and localStorage
+    const handleMastered = (correct) => {
+        // 1. Optimistic Backend Update (Background)
+        if (user?.id) {
+            userService.updateProgress(
+                user.id,
+                category,
+                correct,
+                currentCard?.difficulty || 'Easy'
+            ).then(updatedUser => {
                 const mergedUser = { ...user, ...updatedUser };
                 setUser(mergedUser);
                 localStorage.setItem('devready_user', JSON.stringify(mergedUser));
-            }
-        } catch (error) {
-            console.error("Failed to sync flashcard progress:", error);
+            }).catch(error => {
+                console.error("Failed to sync flashcard progress:", error);
+            });
         }
 
-        // Brief delay before showing next card for smoother transition
+        // 2. Immediate UI Transition
         setTimeout(() => {
             loadNewCard();
         }, 300);

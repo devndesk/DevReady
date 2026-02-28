@@ -79,7 +79,7 @@ const Quiz = ({ user, setUser, onBack }) => {
         }
     };
 
-    const handleAnswer = async (option) => {
+    const handleAnswer = (option) => {
         if (selectedOption !== null) return;
 
         const isCorrect = option === questions[currentIndex].correctAnswer;
@@ -89,18 +89,17 @@ const Quiz = ({ user, setUser, onBack }) => {
             setScore(prev => prev + 1);
         }
 
-        // Backend Update
-        try {
-            if (user?.id) {
-                const updatedUser = await userService.updateProgress(user.id, topic, isCorrect, 'Hard');
-
-                // Sync to global state and localStorage
-                const mergedUser = { ...user, ...updatedUser };
-                setUser(mergedUser);
-                localStorage.setItem('devready_user', JSON.stringify(mergedUser));
-            }
-        } catch (error) {
-            console.error("Failed to sync progress:", error);
+        // Backend Update (Background)
+        if (user?.id) {
+            userService.updateProgress(user.id, topic, isCorrect, 'Hard')
+                .then(updatedUser => {
+                    const mergedUser = { ...user, ...updatedUser };
+                    setUser(mergedUser);
+                    localStorage.setItem('devready_user', JSON.stringify(mergedUser));
+                })
+                .catch(error => {
+                    console.error("Failed to sync progress:", error);
+                });
         }
 
         setShowExplanation(true);
