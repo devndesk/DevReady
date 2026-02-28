@@ -43,7 +43,9 @@ public class LeagueService {
         }
 
         // No space or no groups yet, create new ID
-        return currentLeague.name() + "_" + UUID.randomUUID().toString().substring(0, 8);
+        String newGroupId = currentLeague.name() + "_" + UUID.randomUUID().toString().substring(0, 8);
+        System.out.println("[LEAGUE] Creating new group: " + newGroupId + " for user: " + user.getEmail());
+        return newGroupId;
     }
 
     public List<User> getLeaderboard(String leagueGroupId) {
