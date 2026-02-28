@@ -16,17 +16,19 @@ const Login = ({ onLogin }) => {
         setError(null);
 
         try {
-            // In our simple system, we just fetch the user by email.
-            // If they don't exist, the backend creates them automatically with the name provided.
-            const user = await userService.getUser(email);
+            // 1. Fetch/Create user
+            let user = await userService.getUser(email);
 
-            // If the user's name is default but they provided a different one, sync it
-            if (name && user.name === "Dev User") {
+            // 2. Update name if it's a new user and name was provided
+            if (name && (user.name === "Dev User" || !user.name)) {
                 user.name = name;
-                await userService.syncUser(user);
+                user = await userService.syncUser(user);
             }
 
+            // 3. Signal App.jsx to skip redundant sync
+            localStorage.setItem('devready_recent_login', 'true');
             localStorage.setItem('devready_user', JSON.stringify(user));
+
             onLogin(user);
         } catch (err) {
             console.error("Login Error:", err);

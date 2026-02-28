@@ -19,25 +19,24 @@ function App() {
   });
   const [selectedCategory, setSelectedCategory] = useState('Java Core'); // Default category
 
-  // Global user sync on load
+  // Global user sync on load (Skip if recently logged in)
   useEffect(() => {
+    const isRecent = localStorage.getItem('devready_recent_login');
+    if (isRecent) {
+      localStorage.removeItem('devready_recent_login');
+      return;
+    }
+
     const syncWithBackend = async () => {
       if (!user?.email) return;
 
       try {
-        // Fetch latest user data from backend
         const backendUser = await userService.getUser(user.email);
-
-        // Merge and save back to local
         const mergedUser = {
           ...user,
           ...backendUser,
           id: backendUser.id || user.id,
-          weeklyXp: backendUser.weeklyXp !== undefined ? backendUser.weeklyXp : user.weeklyXp,
-          currentLeague: backendUser.currentLeague || user.currentLeague || 'BRONZE',
-          leagueGroupId: backendUser.leagueGroupId || user.leagueGroupId,
         };
-
         localStorage.setItem('devready_user', JSON.stringify(mergedUser));
         setUser(mergedUser);
       } catch (error) {
@@ -48,6 +47,7 @@ function App() {
   }, [user?.email]);
 
   const handleLogin = (userData) => {
+    localStorage.setItem('devready_recent_login', 'true');
     setUser(userData);
     setActiveTab('home');
   };
