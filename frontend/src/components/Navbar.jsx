@@ -1,10 +1,11 @@
-import { Home, Layers, FileText, User } from 'lucide-react';
+import { Home, Layers, FileText, User, Trophy } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 
 const Navbar = ({ activeTab, setActiveTab }) => {
     const navItems = [
         { id: 'home', icon: Home, label: 'Home' },
+        { id: 'league', icon: Trophy, label: 'League' },
         { id: 'flashcards', icon: Layers, label: 'Cards' },
         { id: 'cheatsheet', icon: FileText, label: 'Sheets' },
         { id: 'profile', icon: User, label: 'Profile' },

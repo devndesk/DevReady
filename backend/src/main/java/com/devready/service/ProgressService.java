@@ -16,6 +16,9 @@ public class ProgressService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LeagueService leagueService;
+
     public User updateProgress(String userId, String category, boolean correct, String difficulty) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty())
@@ -54,8 +57,20 @@ public class ProgressService {
             user.setMastery(mastery);
         }
         user.setTotalXp(user.getTotalXp() + xpGain);
+
+        // --- LEAGUE UPDATE ---
+        // Update Weekly XP
+        user.setWeeklyXp(user.getWeeklyXp() + xpGain);
+
+        // Lazy Grouping Logic: If user earns XP but has no group, assign one
+        if (user.getLeagueGroupId() == null) {
+            String groupId = leagueService.assignToGroup(user);
+            user.setLeagueGroupId(groupId);
+        }
+        // ---------------------
+
         System.out.println("[PROGRESS DEBUG] User: " + user.getEmail() + " | XP Gained: " + xpGain + " | Total XP: "
-                + user.getTotalXp());
+                + user.getTotalXp() + " | Weekly XP: " + user.getWeeklyXp());
         System.out.println("[PROGRESS DEBUG] Questions Solved: " + user.getQuestionsSolved());
 
         // 2. Automated Streak Logic (String Based for reliability)

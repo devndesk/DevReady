@@ -32,8 +32,12 @@ public class User {
     // Mastery Progress (Category -> Percentage)
     private Map<String, Integer> mastery;
 
-    // Earned Badges
     private List<Badge> badges;
+
+    // League System Fields
+    private Long weeklyXp = 0L;
+    private League currentLeague = League.BRONZE;
+    private String leagueGroupId;
 
     // Getters and Setters
     public String getId() {
@@ -146,6 +150,30 @@ public class User {
 
     public void setBadges(List<Badge> badges) {
         this.badges = badges;
+    }
+
+    public Long getWeeklyXp() {
+        return weeklyXp;
+    }
+
+    public void setWeeklyXp(Long weeklyXp) {
+        this.weeklyXp = weeklyXp;
+    }
+
+    public League getCurrentLeague() {
+        return currentLeague;
+    }
+
+    public void setCurrentLeague(League currentLeague) {
+        this.currentLeague = currentLeague;
+    }
+
+    public String getLeagueGroupId() {
+        return leagueGroupId;
+    }
+
+    public void setLeagueGroupId(String leagueGroupId) {
+        this.leagueGroupId = leagueGroupId;
     }
 
     @NoArgsConstructor

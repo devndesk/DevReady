@@ -42,4 +42,13 @@ export const streakService = {
     },
 };
 
+export const leagueService = {
+    getLeaderboard: async (leagueGroupId) => {
+        const response = await api.get('/league/leaderboard', {
+            params: { leagueGroupId }
+        });
+        return response.data;
+    },
+};
+
 export default api;

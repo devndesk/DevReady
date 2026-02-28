@@ -7,6 +7,7 @@ import Flashcards from './pages/Flashcards';
 import CheatSheet from './pages/CheatSheet';
 import Profile from './pages/Profile';
 import Quiz from './pages/Quiz';
+import LeagueLeaderboard from './pages/LeagueLeaderboard';
 import Login from './pages/Login';
 import { userService } from './services/api';
 
@@ -36,6 +37,9 @@ function App() {
           questionsSolved: backendUser.questionsSolved || 0,
           currentStreak: backendUser.currentStreak || 0,
           rank: backendUser.rank || 'NEWBIE',
+          weeklyXp: backendUser.weeklyXp || 0,
+          currentLeague: backendUser.currentLeague || 'BRONZE',
+          leagueGroupId: backendUser.leagueGroupId,
           mastery: backendUser.mastery || {}
         };
 
@@ -61,6 +65,8 @@ function App() {
     switch (activeTab) {
       case 'home':
         return <Dashboard user={user} setActiveTab={setActiveTab} setSelectedCategory={setSelectedCategory} />;
+      case 'league':
+        return <LeagueLeaderboard user={user} />;
       case 'flashcards':
         return <Flashcards user={user} setUser={setUser} category={selectedCategory} />;
       case 'cheatsheet':
