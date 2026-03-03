@@ -130,7 +130,7 @@ const Flashcards = ({ user, setUser, category = "Java Core" }) => {
 
                     {/* Back: Explanation */}
                     <div
-                        className="absolute inset-0 bg-gradient-to-br from-emerald-950/40 via-gray-900 to-black backdrop-blur-xl rounded-3xl p-8 flex flex-col items-center justify-center shadow-2xl border border-emerald-500/10 backface-hidden"
+                        className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 via-emerald-950/20 to-black backdrop-blur-xl rounded-3xl p-8 flex flex-col items-center justify-center shadow-[0_0_40px_-10px_rgba(16,185,129,0.3)] border border-emerald-500/20 backface-hidden"
                         style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}
                     >
                         <span className="text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest absolute top-6 left-6 border border-emerald-500/20 font-mono uppercase">
@@ -138,8 +138,8 @@ const Flashcards = ({ user, setUser, category = "Java Core" }) => {
                         </span>
 
                         <div className="w-full text-center">
-                            <p className="text-lg font-medium leading-relaxed text-emerald-50/90 italic">
-                                "{currentQuestion?.explanation || currentQuestion?.correctAnswer}"
+                            <p className="text-xl font-bold leading-tight text-white/95">
+                                {currentQuestion?.explanation || currentQuestion?.correctAnswer}
                             </p>
                         </div>
                     </div>
