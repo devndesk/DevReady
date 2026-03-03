@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw, Check, X, ArrowRight, BrainCircuit, Lock } from 'lucide-react';
-import { flashcardService, userService } from '../services/api';
+import { userService } from '../services/api';
+import { flashcardsData } from '../data/flashcardsData';
 
 const Flashcards = ({ user, setUser, category = "Java Core" }) => {
     const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -14,21 +15,37 @@ const Flashcards = ({ user, setUser, category = "Java Core" }) => {
         seenIdsRef.current = [];
     }, [category]);
 
-    const loadNewCard = useCallback(async () => {
+    const loadNewCard = useCallback(() => {
         setIsLoading(true);
         setIsFlipped(false);
 
-        try {
-            const data = await flashcardService.getRandomCard(category, seenIdsRef.current);
+        // Artificial delay for futuristic decryption feel, but much faster than API
+        setTimeout(() => {
+            const categoryCards = flashcardsData[category] || [];
+            if (categoryCards.length === 0) {
+                setCurrentQuestion(null);
+                setIsLoading(false);
+                return;
+            }
+
+            // Filter out seen cards
+            let availableCards = categoryCards.filter(card => !seenIdsRef.current.includes(card.id));
+
+            // If all cards seen, reset
+            if (availableCards.length === 0) {
+                seenIdsRef.current = [];
+                availableCards = categoryCards;
+            }
+
+            const randomIndex = Math.floor(Math.random() * availableCards.length);
+            const data = availableCards[randomIndex];
+
             if (data) {
                 setCurrentQuestion(data);
                 seenIdsRef.current = [...seenIdsRef.current, data.id];
             }
-        } catch (error) {
-            console.error("Failed to fetch AI card:", error);
-        } finally {
             setIsLoading(false);
-        }
+        }, 400);
     }, [category]);
 
     useEffect(() => {
@@ -47,9 +64,11 @@ const Flashcards = ({ user, setUser, category = "Java Core" }) => {
                     true,
                     currentQuestion?.difficulty || 'Easy'
                 );
-                const mergedUser = { ...user, ...updatedUser };
-                setUser(mergedUser);
-                localStorage.setItem('devready_user', JSON.stringify(mergedUser));
+                if (updatedUser) {
+                    const mergedUser = { ...user, ...updatedUser };
+                    setUser(mergedUser);
+                    localStorage.setItem('devready_user', JSON.stringify(mergedUser));
+                }
             } catch (error) {
                 console.error("Failed to sync progress:", error);
             }
@@ -62,7 +81,7 @@ const Flashcards = ({ user, setUser, category = "Java Core" }) => {
         return (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)]">
                 <div className="w-12 h-12 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
-                <p className="text-gray-500 font-mono text-[10px] animate-pulse">SYNCHRONIZING WITH GROK NEURAL NETWORK...</p>
+                <p className="text-gray-500 font-mono text-[10px] animate-pulse">DECRYPTING OFFLINE DATABASE...</p>
             </div>
         );
     }
